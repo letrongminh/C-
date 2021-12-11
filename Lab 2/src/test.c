@@ -7,17 +7,19 @@
 
 int getpagesize(void);
 
+
 void test_one(void*heap){
     printf("Page size is = %d\n",getpagesize());
+    printf("========================================\n\n");
     fprintf(stdout,"Test №1 : normal successful memory allocation\n");
     debug_heap(stdout, heap);
     void *q = _malloc(500);
     debug_heap(stdout, heap);
     _free(q);
-    printf("\n\n");
+    printf("========================================\n\n");
 }
 void test_two(void *heap){
-    fprintf(stdout,"Test №2 : freeing one block from several allocated blocks\n");
+    fprintf(stdout,"Test №2 : Freeing one block from several allocated\n");
 
     //fprintf(stdout,"Lets see current heap status\n");
 
@@ -64,18 +66,19 @@ void test_four(void *heap){
     debug_heap(stdout,heap);
     _free(f);
     debug_heap(stdout,heap);
-    printf("\n\n");
+    printf("========================================\n\n");
 }
 void test_five(void *heap){
-    fprintf(stdout,"Test №5 \n");
+    fprintf(stdout,"Test №5 : The memory has run out, the old memory region cannot be expanded due to a "
+                   "different allocated range of addresses, the new region is allocated in a different place.\n");
     debug_heap(stdout,heap);
 
-    fprintf(stdout, "=====================\n");
+    fprintf(stdout, "========================================\n\n");
 
-    map_pages_for_main((uint8_t*)heap+4*getpagesize(),88888888,MAP_FIXED);
+    map_pages_for_main((uint8_t*)heap+4*getpagesize(),50000000,MAP_FIXED);
     debug_heap(stdout,heap);
-    _malloc(20422 );
+    _malloc(98765 );
     debug_heap(stdout,heap);
-    _malloc(10000);
+    _malloc(43210);
     debug_heap(stdout,heap);
 }
