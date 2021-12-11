@@ -4,6 +4,9 @@
 #ifndef ASSIGNMENT_MEMORY_ALLOCATOR_TEST_H
 #define ASSIGNMENT_MEMORY_ALLOCATOR_TEST_H
 
+#include <stdio.h>
+#include <mem.h>
+
 void test_one(void *heap);
 void test_two(void *heap);
 void test_three(void *heap);

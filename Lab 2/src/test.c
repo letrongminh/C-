@@ -2,7 +2,8 @@
 // Created by trongminhle on 12/3/21.
 //
 
-#include "memory_test.h"
+// #include "memory_test.h"
+#include "test.h"
 
 int getpagesize(void);
 
