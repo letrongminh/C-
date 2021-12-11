@@ -70,7 +70,7 @@ void test_five(void *heap){
 
 
 int main(){
-    void* heap = heap_init(666);
+    void* heap = heap_init(12345);
     test_one(heap);
     test_two(heap);
     test_three(heap);

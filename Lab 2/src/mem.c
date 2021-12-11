@@ -53,11 +53,11 @@ static struct region alloc_region  ( void const * addr, size_t query ) {
 
     region_sz.addr=map_pages(addr,region_actual_size(query), MAP_FIXED_NOREPLACE );
 
-    if(region_sz.addr==(void*)-1){//MAP_FAILED
+    //MAP_FAILED
+    if(region_sz.addr==(void*)-1){
         region_sz.addr=map_pages(addr,region_actual_size(query), 0 );
 
         region_sz.extends=false;
-
     }
     else{
         region_sz.extends=true;
@@ -98,8 +98,7 @@ static bool split_if_too_big( struct block_header* block, size_t query ) {
 
         return true;
     }
-    else
-        return false;
+    return false;
 }
 
 
@@ -127,8 +126,8 @@ static bool try_merge_with_next( struct block_header* block ) {
       block_size size_for_current_function={.bytes=size_from_capacity(header_next->capacity).bytes};
       block->capacity.bytes+=size_for_current_function.bytes;
       return true;
-  } else
-      return false;
+  }
+  return false;
 }
 
 
@@ -170,7 +169,6 @@ static struct block_search_result try_memalloc_existing ( size_t query, struct b
   }
     return existing_block;
 }
-
 
 
 static struct block_header* grow_heap( struct block_header* restrict last, size_t query ) {
@@ -221,3 +219,4 @@ void _free( void* mem ) {
   /*  ??? */
   while (header->next&&try_merge_with_next(header)){};
 }
+

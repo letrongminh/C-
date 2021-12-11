@@ -11,7 +11,7 @@ void test_one(void*heap){
     printf("Page size is = %d\n",getpagesize());
     fprintf(stdout,"Test №1 : normal successful memory allocation\n");
     debug_heap(stdout, heap);
-    void *q = _malloc(25);
+    void *q = _malloc(500);
     debug_heap(stdout, heap);
     _free(q);
     printf("\n\n");
@@ -24,7 +24,7 @@ void test_two(void *heap){
     debug_heap(stdout,heap);
 
     //fprintf(stdout,"now lets make some block\n");
-    void *block_one=_malloc(65);
+    void *block_one=_malloc(150);
 
     //fprintf(stdout,"Lets see current heap status\n");
     debug_heap(stdout,heap);
@@ -36,8 +36,8 @@ void test_two(void *heap){
 }
 void test_three(void *heap){
     fprintf(stdout,"Test №3 : release of the two blocks of several dedicated\n");
-    void *block_two=_malloc(66);
-    void *block_three=_malloc(67);
+    void *block_two=_malloc(200);
+    void *block_three=_malloc(250);
 
     //fprintf(stdout,"Lets see current heap status\n");
 
@@ -53,8 +53,11 @@ void test_three(void *heap){
 void test_four(void *heap){
     fprintf(stdout,"Test №4 : the memory has run out, the new memory region expands the old one\n");
     debug_heap(stdout,heap);
+
+
+
     fprintf(stdout,"add some extra \n");
-    void*f=_malloc(9000);
+    void*f=_malloc(10000);
 
     //fprintf(stdout,"Lets see current heap status\n");
 
@@ -66,6 +69,9 @@ void test_four(void *heap){
 void test_five(void *heap){
     fprintf(stdout,"Test №5 \n");
     debug_heap(stdout,heap);
+
+    fprintf(stdout, "=====================\n");
+
     map_pages_for_main((uint8_t*)heap+4*getpagesize(),88888888,MAP_FIXED);
     debug_heap(stdout,heap);
     _malloc(20422 );
