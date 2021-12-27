@@ -24,12 +24,6 @@ $(BUILDDIR)/util.o: $(SRCDIR)/util.c build
 $(BUILDDIR)/test.o: $(SRCDIR)/test.c build
 	$(CC) -c $(CFLAGS) $< -o $@
 
-clean:
-	rm -rf $(BUILDDIR)/mem.o $(BUILDDIR)/util.o $(BUILDDIR)/mem_debug.o $(BUILDDIR)/test.o $(BUILDDIR)/main.o $(BUILDDIR)/main
-	rm -d $(BUILDDIR)
-
-
-# add
 
 run:
 ifneq ("$(wildcard $(BUILDDIR)/main)","")
@@ -37,3 +31,9 @@ ifneq ("$(wildcard $(BUILDDIR)/main)","")
 else
 	$(error Nothing to run)
 endif
+
+
+
+clean:
+	rm -rf $(BUILDDIR)/mem.o $(BUILDDIR)/util.o $(BUILDDIR)/mem_debug.o $(BUILDDIR)/test.o $(BUILDDIR)/main.o $(BUILDDIR)/main
+	rm -d $(BUILDDIR)

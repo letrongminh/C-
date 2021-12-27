@@ -73,8 +73,6 @@ void test_five(void *heap){
                    "different allocated range of addresses, the new region is allocated in a different place.\n");
     debug_heap(stdout,heap);
 
-    fprintf(stdout, "========================================\n\n");
-
     map_pages_for_main((uint8_t*)heap+4*getpagesize(),50000000,MAP_FIXED);
     debug_heap(stdout,heap);
     _malloc(98765 );
