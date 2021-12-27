@@ -65,8 +65,8 @@ void test_5(void *heap){
     // mapping fixed
     map_pages_for_main((uint8_t*)heap+4*getpagesize(),50000000,MAP_FIXED);
     debug_heap(stdout,heap);
-    _malloc(98765 );
+    _malloc(12345 );
     debug_heap(stdout,heap);
-    _malloc(43210);
+    _malloc(98765);
     debug_heap(stdout,heap);
 }
