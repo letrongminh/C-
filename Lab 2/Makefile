@@ -33,7 +33,6 @@ else
 endif
 
 
-
 clean:
 	rm -rf $(BUILDDIR)/mem.o $(BUILDDIR)/util.o $(BUILDDIR)/mem_debug.o $(BUILDDIR)/test.o $(BUILDDIR)/main.o $(BUILDDIR)/main
 	rm -d $(BUILDDIR)

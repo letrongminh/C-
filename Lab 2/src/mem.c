@@ -46,7 +46,7 @@ static void* map_pages(void const* addr, size_t length, int additional_flags) {
 
 /*  аллоцировать регион памяти и инициализировать его блоком */
 static struct region alloc_region  ( void const * addr, size_t query ) {
-    /*  ??? */
+
     struct region  region_sz;
 
     region_sz.size=region_actual_size(query);
@@ -86,7 +86,6 @@ static bool block_splittable( struct block_header* restrict block, size_t query)
 }
 
 static bool split_if_too_big( struct block_header* block, size_t query ) {
-    /*  ??? */
 
     if(block_splittable(block,query)){
         block_init(
@@ -118,8 +117,6 @@ static bool mergeable(struct block_header const* restrict fst, struct block_head
 
 static bool try_merge_with_next( struct block_header* block ) {
 
-    /*  ??? */
-
   if(block->next&&mergeable(block,block->next) ){
       struct block_header *header_next=block->next;
       block->next=header_next->next;
@@ -140,7 +137,7 @@ struct block_search_result {
 
 
 static struct block_search_result find_good_or_last  ( struct block_header* restrict block, size_t sz )    {
-  /*??? */
+
     if(block==NULL)
         return (struct block_search_result){BSR_CORRUPTED,NULL};
     while (block!=NULL){
@@ -172,7 +169,7 @@ static struct block_search_result try_memalloc_existing ( size_t query, struct b
 
 
 static struct block_header* grow_heap( struct block_header* restrict last, size_t query ) {
-  /*  ??? */
+
   struct region new_region=alloc_region(block_after(last),query);
   last->next=new_region.addr;
     return (struct block_header*)new_region.addr;
@@ -180,7 +177,6 @@ static struct block_header* grow_heap( struct block_header* restrict last, size_
 
 /*  Реализует основную логику malloc и возвращает заголовок выделенного блока */
 static struct block_header* memalloc( size_t query, struct block_header* heap_start) {
-  /*  ??? */
     if(query<BLOCK_MIN_CAPACITY)
         query=BLOCK_MIN_CAPACITY;
     //const size_t size = region_actual_size(query);
@@ -216,7 +212,7 @@ void _free( void* mem ) {
   if (!mem) return ;
   struct block_header* header = block_get_header( mem );
   header->is_free = true;
-  /*  ??? */
+
   while (header->next&&try_merge_with_next(header)){};
 }
 
