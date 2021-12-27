@@ -7,10 +7,10 @@
 #include <stdio.h>
 #include <mem.h>
 
-void test_one(void *heap);
-void test_two(void *heap);
-void test_three(void *heap);
-void test_four(void *heap);
-void test_five(void *heap);
+void test_1(void *heap);
+void test_2(void *heap);
+void test_3(void *heap);
+void test_4(void *heap);
+void test_5(void *heap);
 
 #endif
