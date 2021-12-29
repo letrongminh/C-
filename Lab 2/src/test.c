@@ -64,7 +64,7 @@ struct test_result test_4() {
     return out_res;
 }
 
-static inline void mmap_region(size_t length, void *addr) {
+void mmap_aloc(size_t length, void *addr) {
 
     size_t count = (size_t) addr / getpagesize();
     size_t remains = (size_t) addr % getpagesize();
@@ -84,7 +84,7 @@ struct test_result test_5() {
     void *addr = block + block->capacity.bytes;
 
     // test cannot extend length
-    mmap_region(3210, addr);
+    mmap_aloc(3210, addr);
 
     // test cannot extend allocate
     void *allocated = _malloc(98765);
