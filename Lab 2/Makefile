@@ -15,15 +15,14 @@ $(BUILDDIR)/mem.o: $(SRCDIR)/mem.c build
 $(BUILDDIR)/mem_debug.o: $(SRCDIR)/mem_debug.c build
 	$(CC) -c $(CFLAGS) $< -o $@
 
-$(BUILDDIR)/main.o: $(SRCDIR)/main.c build
-	$(CC) -c $(CFLAGS) $< -o $@
-
 $(BUILDDIR)/util.o: $(SRCDIR)/util.c build
 	$(CC) -c $(CFLAGS) $< -o $@
 
 $(BUILDDIR)/test.o: $(SRCDIR)/test.c build
 	$(CC) -c $(CFLAGS) $< -o $@
 
+$(BUILDDIR)/main.o: $(SRCDIR)/main.c build
+	$(CC) -c $(CFLAGS) $< -o $@
 
 run:
 ifneq ("$(wildcard $(BUILDDIR)/main)","")
