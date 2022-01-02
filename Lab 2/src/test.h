@@ -8,11 +8,11 @@
 #define _DEFAULT_SOURCE
 #include "mem.h"
 #include "mem_internals.h"
-#include "util.h"
+//#include "util.h"
 
 #include <unistd.h>
 #include <stdio.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 
 
 struct test_result { void *_function;};
