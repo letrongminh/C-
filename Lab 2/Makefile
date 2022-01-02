@@ -24,7 +24,7 @@ $(BUILDDIR)/test.o: $(SRCDIR)/test.c build
 $(BUILDDIR)/main.o: $(SRCDIR)/main.c build
 	$(CC) -c $(CFLAGS) $< -o $@
 
-run:
+run: all
 ifneq ("$(wildcard $(BUILDDIR)/main)","")
 	./build/main
 else

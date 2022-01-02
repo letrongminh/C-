@@ -3,11 +3,7 @@
 //
 
 #include "test.h"
-#include "mem.h"
-#include <unistd.h>
 
-#include "mem_internals.h"
-#include "util.h"
 
 
 static struct block_header* block;
@@ -19,20 +15,22 @@ static struct block_header *block_get_header(void *contents) {
 
 struct test_result out_res;
 void *heap;
-//struct block_header *block;
 
 bool make_init_heap() {
-    heap = heap_init(20000);
+    heap = heap_init(10000);
     block = (struct block_header *) heap;
     return true;
 }
 
+static void* block_all_ed;
 struct test_result test_1() {
     printf(" test 1: normal successful memory allocation \n");
     debug_heap(stdout, block);
     void *q = _malloc(500);
     debug_heap(stdout, block);
-    _free(q);
+    //_free(q);
+
+    block_all_ed = q;
     printf("========================================\n\n");
     return out_res;
 }
@@ -41,11 +39,11 @@ struct test_result test_1() {
 struct test_result test_2() {
     printf(" test 2: freeing one block from several allocated \n");
     void *block_1 = _malloc(1234);
-    void *block_2 = _malloc(5678);
+    //void *block_2 = _malloc(5678);
     debug_heap(stdout, block);
     _free(block_1);
     debug_heap(stdout, block);
-    _free(block_2);
+    //_free(block_2);
     printf("========================================\n\n");
     return out_res;
 }
@@ -53,14 +51,15 @@ struct test_result test_2() {
 
 struct test_result test_3() {
     printf(" test 3: release of the two blocks of several dedicated \n");
-    void* block_1 = _malloc(2000);
+    //void* block_1 = _malloc(2000);
     void* block_2 = _malloc(3000);
-    void* block_3 = _malloc(4000);
+    //void* block_3 = _malloc(4000);
     debug_heap(stdout, block);
-    _free(block_1);
+    //_free(block_1);
+    _free(block_all_ed);
     _free(block_2);
     debug_heap(stdout, block);
-    _free(block_3);
+    //_free(block_3);
     printf("========================================\n\n");
     return out_res;
 }
@@ -68,44 +67,26 @@ struct test_result test_3() {
 
 struct test_result test_4() {
     printf(" test 4: memory has run out, the new memory region expands the old one \n");
-    const size_t SZ = 1000;
-    debug_heap(stdout, block);
-    //void *block_1 = _malloc(1234);
-    //void *block_2 = _malloc(2345);
-    void* mem = _malloc(SZ);
+    const size_t mem_size_init = 25000;
     debug_heap(stdout, block);
 
+    void* mem_block = _malloc(mem_size_init);
+    debug_heap(stdout, block);
+    struct block_header *last = block_get_header(mem_block);
 
-    //------------------new-------------------
-    if (mem == NULL)
-        err("Err: Null pointer.");
-    struct block_header *last = block_get_header(mem);
-    if(last->capacity.bytes != SZ)
-        err("Ошибка при выделении памяти: размер выделенной памяти не соответствует запрошенному.");
+    if(last->capacity.bytes != mem_size_init)
+        err("Error: the size of the allocated memory does not match the requested one.");
     if(last->is_free)
-        err("Ошибка при выделении памяти: блок не помечен как занятый.");
-    _free(mem);
+        err("Error: block not marked as occupied.");
+
+    _free(mem_block);
     if(!last->is_free)
-        err("Ошибка при очистке памяти: блок не помечен как свободный.");
-    //debug("\nПамять успешно очищена. Состояние кучи:\n");
+        err("Error: block is not marked as free.");
+
     debug_heap(stderr, heap);
 
-
-
-    //_free(block_1);
-    //_free(block_2);
     printf("========================================\n\n");
     return out_res;
-}
-
-void mmap_aloc(size_t length, void *addr) {
-
-    size_t count = (size_t) addr / getpagesize();
-    size_t remains = (size_t) addr % getpagesize();
-
-    uint8_t *total = (uint8_t *) (getpagesize() * (count + (remains > 1)));
-
-    mmap(total, length, PROT_READ | PROT_WRITE, MAP_FIXED_NOREPLACE, 0, 0);
 }
 
 struct test_result test_5() {
@@ -127,46 +108,44 @@ struct test_result test_5() {
     debug_heap(stdout, block);
     _free(block_5);
      */
-    const size_t SZ = 50000;
-    struct block_header* iter = block;
+    const size_t mem_size_init = 60000;
+    struct block_header* temp = block;
     struct block_header* last;
-    while(iter) {
-        last = iter;
-        iter = iter->next;
+    while(temp) {
+        last = temp;
+        temp = temp->next;
     }
     void* addr = (uint8_t*) last + size_from_capacity(last->capacity).bytes;
 
+    /*
     addr = map_pages_for_main((uint8_t*) (getpagesize() * ((size_t) addr / getpagesize() +
                                                            (((size_t) addr % getpagesize()) > 0))), 1000,
                               MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE);
-
-    /*
-    addr = mmap( (uint8_t*) (getpagesize() * ((size_t) addr / getpagesize() +
-                                              (((size_t) addr % getpagesize()) > 0))), 1000,
-                 PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE,0, 0);
-
     */
-    printf("\nАдрес, по которому память стала недоступна: %p.\n", addr);
-    void* mem = _malloc(SZ);
-    struct block_header* new = block_get_header(mem);
-    if (mem == NULL)
-        err("err: Null pointer.");
-    if(!new)
-        err("Ошибка при выделении памяти: блок не встроен в кучу.");
-    if(new->capacity.bytes != SZ)
-        err("Ошибка при выделении памяти: размер выделенной памяти не соответствует запрошенному.");
-    if(new->is_free)
-        err("Ошибка при выделении памяти: блок не помечен как занятый.");
+
+    map_pages_for_main((uint8_t*) (getpagesize() * ((size_t) addr / getpagesize() +
+                                        (((size_t) addr % getpagesize()) > 0))), 1000,
+                       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE);
+
+    //printf("\nThe address at which the memory became unavailable: %p.\n", addr);
+    void* mem_block = _malloc(mem_size_init);
+    struct block_header* new_block = block_get_header(mem_block);
+
+
+    if(new_block->capacity.bytes != mem_size_init)
+        err("Memory allocation error: the size of the allocated memory does not match the requested one.");
+
+    if(new_block->is_free)
+        err("Memory allocation error: the block is not marked as occupied.");
+
     debug_heap(stderr, heap);
-    _free(mem);
-    if(!new->is_free)
-        err("Ошибка при очистке памяти: блок не помечен как свободный.");
-    printf("\nПамять успешно очищена. Состояние кучи:\n");
+    _free(mem_block);
+
+    if(!new_block->is_free)
+        err("An error occurred while clearing memory: the block was not marked as free.");
+
     debug_heap(stderr, heap);
 
-
-
-    printf("========================================\n\n");
     return out_res;
 }
 
