@@ -44,7 +44,8 @@ struct test_result test_2() {
     debug_heap(stdout, block);
     _free(block_1);
     //debug_heap(stdout, block);
-    _free(block_2);
+    //_free(block_2);
+    block_all_ed = block_2;
     debug_heap(stderr, block);
     printf("========================================\n\n");
     return out_res;
@@ -88,31 +89,6 @@ struct test_result test_4() {
 
     debug_heap(stderr, heap);
 
-    /*
-    const size_t mem_size_init = 25000;
-    debug_heap(stdout, block);
-
-    struct block_header* temp = block;
-    struct block_header* last;
-    while(temp) {
-        last = temp;
-        temp = temp->next;
-    }
-    void* addr = (uint8_t*) last + size_from_capacity(last->capacity).bytes;
-
-
-    map_pages_for_main((uint8_t*) (getpagesize() * ((size_t) addr / getpagesize() +
-                                                    (((size_t) addr % getpagesize()) > 0))), 1000, MAP_STACK);
-    void* mem_block = _malloc(mem_size_init);
-    //struct block_header* new_block = block_get_header(mem_block);
-
-    debug_heap(stderr, heap);
-    _free(mem_block);
-
-    debug_heap(stderr, heap);
-
-    */
-
     printf("========================================\n\n");
     return out_res;
 }
@@ -123,16 +99,15 @@ static inline void mmap_region(size_t length, void *addr) {
 
     uint8_t *total = (uint8_t *) (getpagesize() * (count + (remains > 1)));
 
-    mmap(total, length, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
+    mmap(total, length, PROT_READ | PROT_WRITE, MAP_FIXED_NOREPLACE| MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
 }
-
-#define TEST_GROW_HEAP_NOT_EXTENDING_LENGTH 1000
-#define TEST_GROW_HEAP_NOT_EXTENDING_ALLOCATE 10000
-
 
 struct test_result test_5() {
     printf(" test 5: memory has run out, the new region is allocated in a different place \n");
     debug_heap(stdout, block);
+    const size_t mem_size_cre = 100000;
+    const size_t leng_ = 1000;
+
 /*
     const size_t mem_size_init = 50000;
     struct block_header* temp = block;
@@ -167,17 +142,17 @@ struct test_result test_5() {
         block = block->next;
 
     void *addr = block + block->capacity.bytes;
-    mmap_region(TEST_GROW_HEAP_NOT_EXTENDING_LENGTH, addr);
+    mmap_region(leng_, addr);
 
-    void *allocated = _malloc(TEST_GROW_HEAP_NOT_EXTENDING_ALLOCATE);
+    void *allocated = _malloc(mem_size_cre);
 
     if ((uint8_t *) block->next == (uint8_t *) allocated - offsetof(struct block_header, contents)) {
-        printf("ew region allocated in the old region\n");
+        printf("New region allocated in the old region\n");
     }
-    debug_heap(stdout, block);
 
     _free(allocated);
 
+    debug_heap(stderr, block);
     return out_res;
 }
 
