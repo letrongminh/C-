@@ -29,21 +29,21 @@ bool make_init_heap() {
 struct test_result test_1() {
     printf(" test 1: normal successful memory allocation \n");
     debug_heap(stderr, block);
-    void *data1 = _malloc(2000);
-    struct block_header *data1_header = block_get_header(data1);
+    void *block_1 = _malloc(2000);
+    struct block_header *data1_header = block_get_header(block_1);
 /*
-    if (data1 == NULL) extra_end("_malloc returned NULL!", block);
+    if (block_1 == NULL) extra_end("_malloc returned NULL!", block);
     if (data1_header->is_free == true) extra_end("_malloc returned free block!", block);
     if (data1_header->next == NULL) extra_end("_malloc returned not linked block!", block);
     if (data1_header->capacity.bytes != 2000) extra_end("_malloc returned block with wrong capacity", block);
 */
     debug_heap(stderr, block);
 
-    _free(data1);
+    _free(block_1);
 
     if (data1_header->is_free == false) extra_end("_free didn't free block!", block);
 
-    _free(data1);
+    _free(block_1);
     debug_heap(stderr, block);
     printf("========================================\n\n");
     return out_res;
@@ -53,24 +53,24 @@ struct test_result test_1() {
 struct test_result test_2() {
     printf(" test 2: freeing one block from several allocated \n");
     debug_heap(stderr, block);
-    void *data1 = _malloc(2000);
-    void *data2 = _malloc(2000);
-    //if (data1 == NULL || data2 == NULL) extra_end("_malloc returned NULL!", block);
+    void *block_1 = _malloc(2000);
+    void *block_2 = _malloc(2000);
+    //if (block_1 == NULL || block_2 == NULL) extra_end("_malloc returned NULL!", block);
 
     debug_heap(stderr, block);
 
-    struct block_header *data1_header = block_get_header(data1);
-    struct block_header *data2_header = block_get_header(data2);
+    struct block_header *data1_header = block_get_header(block_1);
+    struct block_header *data2_header = block_get_header(block_2);
 
-    _free(data2);
+    _free(block_2);
 
     if (data1_header->is_free == true) extra_end("_free free extra block!", block);
     if (data2_header->is_free == false) extra_end("_free didn't free block!", block);
 
     debug_heap(stderr, block);
 
-    _free(data2);
-    _free(data1);
+    _free(block_2);
+    _free(block_1);
     debug_heap(stderr, block);
     printf("========================================\n\n");
     return out_res;
@@ -79,38 +79,38 @@ struct test_result test_2() {
 
 struct test_result test_3() {
     printf(" test 3: release of the two blocks of several dedicated \n");
-    void *data1 = _malloc(2000);
-    void *data2 = _malloc(3000);
-    void *data3 = _malloc(4000);
-    if (data1 == NULL || data2 == NULL || data3 == NULL) extra_end("_malloc returned NULL!", block);
+    void *block_1 = _malloc(2000);
+    void *block_2 = _malloc(3000);
+    void *block_3 = _malloc(4000);
+    if (block_1 == NULL || block_2 == NULL || block_3 == NULL) extra_end("_malloc returned NULL!", block);
 
     debug_heap(stderr, block);
 
-    struct block_header *data1_header = block_get_header(data1);
-    struct block_header *data2_header = block_get_header(data2);
-    struct block_header *data3_header = block_get_header(data3);
+    struct block_header *data1_header = block_get_header(block_1);
+    struct block_header *data2_header = block_get_header(block_2);
+    struct block_header *data3_header = block_get_header(block_3);
 
     if (data1_header->capacity.bytes != 2000
         || data2_header->capacity.bytes != 3000
         || data3_header->capacity.bytes != 4000)
         extra_end("_malloc returned block with wrong capacity!", block);
 
-    _free(data2);
+    _free(block_2);
 
     //if (data2_header->is_free == false) extra_end("_free didn't free block!", block);
 
     debug_heap(stderr, block);
 
-    _free(data1);
+    _free(block_1);
 
     //if (data1_header->is_free == false) extra_end("_free didn't free block!", block);
     //if (data1_header->next != data3_header) extra_end("_free isn't merge free blocks!", block);
 
     debug_heap(stderr, block);
 
-    _free(data3);
-    _free(data2);
-    _free(data1);
+    _free(block_3);
+    _free(block_2);
+    _free(block_1);
 
     debug_heap(stderr, block);
 
@@ -127,17 +127,17 @@ struct test_result test_4() {
 
     debug_heap(stderr, block);
 
-    void *data1 = _malloc(10000);
-    void *data2 = _malloc(6000);
-    void *data3 = _malloc(5000);
+    void *block_1 = _malloc(10000);
+    void *block_2 = _malloc(6000);
+    void *block_3 = _malloc(5000);
 
-    if (data1 == NULL || data2 == NULL || data3 == NULL) extra_end("_malloc returned NULL!", block);
+    if (block_1 == NULL || block_2 == NULL || block_3 == NULL) extra_end("_malloc returned NULL!", block);
 
     debug_heap(stderr, block);
 
-    struct block_header *data1_header = block_get_header(data1);
-    struct block_header *data2_header = block_get_header(data2);
-    struct block_header *data3_header = block_get_header(data3);
+    struct block_header *data1_header = block_get_header(block_1);
+    struct block_header *data2_header = block_get_header(block_2);
+    struct block_header *data3_header = block_get_header(block_3);
 
     if (data1_header->next != data2_header || data2_header->next != data3_header)
         extra_end("_malloc returned not linked blocks", block);
@@ -150,9 +150,9 @@ struct test_result test_4() {
     if (block_after(data1_header) != data2_header || block_after(data2_header) != data3_header)
         extra_end("_malloc returned non-sequentially placed blocks", block);
 
-    _free(data3);
-    _free(data2);
-    _free(data1);
+    _free(block_3);
+    _free(block_2);
+    _free(block_1);
 
     debug_heap(stderr, block);
     printf("========================================\n\n");
@@ -174,7 +174,7 @@ struct test_result test_5() {
     
     void *region_between_start_adr = block_after(block);
 
-    debug("bet_reg :%10p \n", region_between_start_adr);
+    debug("\n bet_reg :%10p \n", region_between_start_adr);
 
     void *adr = mmap(region_between_start_adr,
                      50000,
@@ -183,20 +183,20 @@ struct test_result test_5() {
                      0,
                      0);
 
-    debug("bet_reg adr:%10p \n", adr);
+    debug("\n bet_reg adr:%10p \n", adr);
 
-    void *data1 = _malloc(10000);
-    void *data2 = _malloc(20000);
+    void *block_1 = _malloc(10000);
+    void *block_2 = _malloc(20000);
 
-    if (data1 == NULL || data2 == NULL) extra_end("_malloc returned NULL!", block);
+    if (block_1 == NULL || block_2 == NULL) extra_end("_malloc returned NULL!", block);
 
     debug_heap(stderr, block);
 
-    struct block_header *data1_header = block_get_header(data1);
-    struct block_header *data2_header = block_get_header(data2);
+    struct block_header *data1_header = block_get_header(block_1);
+    struct block_header *data2_header = block_get_header(block_2);
 
-    debug("first_next :%10p \n", data1_header->next);
-    debug("second :%10p \n", data2_header);
+    debug("\n first_next :%10p \n", data1_header->next);
+    debug("\n second :%10p \n", data2_header);
 /*
     if (data1_header->next == data2_header)
         extra_end("_malloc missed block between additional region and first block", block);
@@ -208,8 +208,8 @@ struct test_result test_5() {
     if (block_after(data1_header) == data2_header)
         extra_end("_malloc ignore between region when grow", block);
 */
-    _free(data2);
-    _free(data1);
+    _free(block_2);
+    _free(block_1);
     debug_heap(stderr, block);
     return out_res;
 
