@@ -11,9 +11,8 @@ static struct block_header *block_get_header(void *contents) {
 }
 
 
-static void extra_end(char *err_msg, void *heap) {
+void infor(char *err_msg, void *heap) {
     debug_heap(stderr, heap);
-    //debug_line(stderr);
     err(err_msg);
 }
 struct test_result out_res;
@@ -32,17 +31,15 @@ struct test_result test_1() {
     void *block_1 = _malloc(2000);
     struct block_header *data1_header = block_get_header(block_1);
 /*
-    if (block_1 == NULL) extra_end("_malloc returned NULL!", block);
-    if (data1_header->is_free == true) extra_end("_malloc returned free block!", block);
-    if (data1_header->next == NULL) extra_end("_malloc returned not linked block!", block);
-    if (data1_header->capacity.bytes != 2000) extra_end("_malloc returned block with wrong capacity", block);
+    if (block_1 == NULL) infor("_malloc returned NULL!", block);
+    if (data1_header->is_free == true) infor("_malloc returned free block!", block);
+    if (data1_header->next == NULL) infor("_malloc returned not linked block!", block);
+    if (data1_header->capacity.bytes != 2000) infor("_malloc returned block with wrong capacity", block);
 */
     debug_heap(stderr, block);
 
     _free(block_1);
-
-    if (data1_header->is_free == false) extra_end("_free didn't free block!", block);
-
+    if (data1_header->is_free == false) infor("_free didn't free block!", block);
     _free(block_1);
     debug_heap(stderr, block);
     printf("========================================\n\n");
@@ -55,7 +52,7 @@ struct test_result test_2() {
     debug_heap(stderr, block);
     void *block_1 = _malloc(2000);
     void *block_2 = _malloc(2000);
-    //if (block_1 == NULL || block_2 == NULL) extra_end("_malloc returned NULL!", block);
+    //if (block_1 == NULL || block_2 == NULL) infor("_malloc returned NULL!", block);
 
     debug_heap(stderr, block);
 
@@ -64,8 +61,8 @@ struct test_result test_2() {
 
     _free(block_2);
 
-    if (data1_header->is_free == true) extra_end("_free free extra block!", block);
-    if (data2_header->is_free == false) extra_end("_free didn't free block!", block);
+    if (data1_header->is_free == true) infor("_free free extra block!", block);
+    if (data2_header->is_free == false) infor("_free didn't free block!", block);
 
     debug_heap(stderr, block);
 
@@ -82,7 +79,7 @@ struct test_result test_3() {
     void *block_1 = _malloc(2000);
     void *block_2 = _malloc(3000);
     void *block_3 = _malloc(4000);
-    if (block_1 == NULL || block_2 == NULL || block_3 == NULL) extra_end("_malloc returned NULL!", block);
+    if (block_1 == NULL || block_2 == NULL || block_3 == NULL) infor("_malloc returned NULL!", block);
 
     debug_heap(stderr, block);
 
@@ -93,18 +90,18 @@ struct test_result test_3() {
     if (data1_header->capacity.bytes != 2000
         || data2_header->capacity.bytes != 3000
         || data3_header->capacity.bytes != 4000)
-        extra_end("_malloc returned block with wrong capacity!", block);
+        infor("_malloc returned block with wrong capacity!", block);
 
     _free(block_2);
 
-    //if (data2_header->is_free == false) extra_end("_free didn't free block!", block);
+    //if (data2_header->is_free == false) infor("_free didn't free block!", block);
 
     debug_heap(stderr, block);
 
     _free(block_1);
 
-    //if (data1_header->is_free == false) extra_end("_free didn't free block!", block);
-    //if (data1_header->next != data3_header) extra_end("_free isn't merge free blocks!", block);
+    //if (data1_header->is_free == false) infor("_free didn't free block!", block);
+    //if (data1_header->next != data3_header) infor("_free isn't merge free blocks!", block);
 
     debug_heap(stderr, block);
 
@@ -131,7 +128,7 @@ struct test_result test_4() {
     void *block_2 = _malloc(6000);
     void *block_3 = _malloc(5000);
 
-    if (block_1 == NULL || block_2 == NULL || block_3 == NULL) extra_end("_malloc returned NULL!", block);
+    if (block_1 == NULL || block_2 == NULL || block_3 == NULL) infor("_malloc returned NULL!", block);
 
     debug_heap(stderr, block);
 
@@ -140,15 +137,15 @@ struct test_result test_4() {
     struct block_header *data3_header = block_get_header(block_3);
 
     if (data1_header->next != data2_header || data2_header->next != data3_header)
-        extra_end("_malloc returned not linked blocks", block);
+        infor("_malloc returned not linked blocks", block);
 /*
     if (data1_header->capacity.bytes != 10000
         || data2_header->capacity.bytes != 6000
         || data3_header->capacity.bytes != 5000)
-        extra_end("_malloc returned block with wrong capacity!", block);
+        infor("_malloc returned block with wrong capacity!", block);
 */
     if (block_after(data1_header) != data2_header || block_after(data2_header) != data3_header)
-        extra_end("_malloc returned non-sequentially placed blocks", block);
+        infor("_malloc returned non-sequentially placed blocks", block);
 
     _free(block_3);
     _free(block_2);
@@ -174,7 +171,7 @@ struct test_result test_5() {
     
     void *region_between_start_adr = block_after(block);
 
-    debug("\n bet_reg :%10p \n", region_between_start_adr);
+    debug("\nbet_reg :%10p \n", region_between_start_adr);
 
     void *adr = mmap(region_between_start_adr,
                      50000,
@@ -183,30 +180,30 @@ struct test_result test_5() {
                      0,
                      0);
 
-    debug("\n bet_reg adr:%10p \n", adr);
+    debug("bet_reg adr:%10p \n", adr);
 
     void *block_1 = _malloc(10000);
     void *block_2 = _malloc(20000);
 
-    if (block_1 == NULL || block_2 == NULL) extra_end("_malloc returned NULL!", block);
+    if (block_1 == NULL || block_2 == NULL) infor("_malloc returned NULL!", block);
 
     debug_heap(stderr, block);
 
     struct block_header *data1_header = block_get_header(block_1);
     struct block_header *data2_header = block_get_header(block_2);
 
-    debug("\n first_next :%10p \n", data1_header->next);
-    debug("\n second :%10p \n", data2_header);
+    debug("\nfirst_next :%10p \n", data1_header->next);
+    debug("second :%10p \n", data2_header);
 /*
     if (data1_header->next == data2_header)
-        extra_end("_malloc missed block between additional region and first block", block);
+        infor("_malloc missed block between additional region and first block", block);
 
     if (data1_header->capacity.bytes != 10000
         || data2_header->capacity.bytes != 20000)
-        extra_end("_malloc returned block with wrong capacity!", block);
+        infor("_malloc returned block with wrong capacity!", block);
 
     if (block_after(data1_header) == data2_header)
-        extra_end("_malloc ignore between region when grow", block);
+        infor("_malloc ignore between region when grow", block);
 */
     _free(block_2);
     _free(block_1);
